@@ -1,0 +1,36 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: ununifi-proposal-atomfeed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ununifi-proposal-atomfeed
+  template:
+    metadata:
+      labels:
+        app: ununifi-proposal-atomfeed
+    spec:
+      containers:
+      - args:
+        image: derorisan/ununifi-proposal-atomfeed
+        imagePullPolicy: Always
+        name: ununifi-proposal-atomfeed
+        ports:
+        - containerPort: 4000
+          protocol: TCP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ununifi-proposal-atomfeed
+spec:
+  ports:
+  - name: "http-port"
+    protocol: TCP
+    port: 80
+    targetPort: 4000
+  selector:
+    app: ununifi-proposal-atomfeed
+---
