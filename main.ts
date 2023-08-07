@@ -18,7 +18,7 @@ const fetchProposals = (async () => {
         console.dir(oo.voting_end_time);
         feed.addItem({
             title: `VotingEnd: ${new Date(oo.voting_end_time).toISOString()} **${oo.content.title}`,
-            link: `{process.env.LINK_BASE_URL}${oo.proposal_id}`,
+            link: `${process.env.LINK_BASE_URL}${oo.proposal_id}`,
             date: new Date(oo.submit_time),
             id: oo.proposal_id,
         });
