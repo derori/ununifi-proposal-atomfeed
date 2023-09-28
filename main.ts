@@ -12,20 +12,19 @@ const fetchProposals = (async () => {
         copyright: "Ununifi gov",
     });
     const { data } = await axios.get(propsEndpoint);
-    let ooo: KeplrGovProposalResponse[] = await data.proposals as KeplrGovProposalResponse[];
+    const ooo: GovV1ProposalResponse[] = await data.proposals as GovV1ProposalResponse[];
     for await (const oo of ooo) {
-        if (!oo.proposal_id) continue;
-        console.dir(oo.voting_end_time);
+        if (!oo.id) continue;
         feed.addItem({
-            title: `VotingEnd: ${new Date(oo.voting_end_time).toISOString()} **${oo.content.title}`,
-            link: `${process.env.LINK_BASE_URL}${oo.proposal_id}`,
+            title: `VotingEnd: ${new Date(oo.voting_end_time).toISOString()} **${oo.title}`,
+            link: `${process.env.LINK_BASE_URL}${oo.id}`,
             date: new Date(oo.submit_time),
-            id: oo.proposal_id,
+            id: oo.id.toString(),
         });
     }
     return feed;
 
-    interface KeplrGovProposalResponse {
+    interface GovV1betaProposalResponse {
         content: {
             '@type': string,
             description: string,
@@ -40,6 +39,35 @@ const fetchProposals = (async () => {
         total_deposit: {},
         voting_end_time: string,
         voting_start_time: Date
+    }
+    interface GovV1ProposalResponse {
+        id: number,
+        messages: {
+            '@type': string,
+            content: {
+                description?: string,
+                title?: string,
+                plan?: {
+                    name: string,
+                    time: Date,
+                    height: Number,
+                    info: string,
+                    upgraded_client_state: boolean
+                },
+            },
+            authority: string,
+        }[],
+        status: string,
+        final_tally_result: {},
+        submit_time: Date,
+        deposit_end_time: Date,
+        total_deposit: {},
+        voting_start_time: Date
+        voting_end_time: Date,
+        metadata: string,
+        title: string,
+        summary: string,
+        proposer: string,
     }
 });
 const server = http.createServer(async (req: IncomingMessage, res: ServerResponse) => {
